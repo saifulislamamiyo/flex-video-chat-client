@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Video from "twilio-video";
 import { Container, Row, Col, Button, Input } from "reactstrap";
 
-const twilioRuntimeDomain = 'folly-rail-4787.twil.io';
+const twilioRuntimeDomain = 'video-svc-5346-dev.twil.io';
 
 export default class VideoComp extends Component {
   constructor(props) {
@@ -34,7 +34,9 @@ export default class VideoComp extends Component {
   handleRoomNameChange(e) {
     /* Fetch room name from text field and update state */
     let identity = e.target.value;
+    let roomName = e.target.value;
     this.setState({ identity });
+    this.setState({ roomName });
   }
 
   joinRoom() {
@@ -264,6 +266,7 @@ export default class VideoComp extends Component {
           identity: data.identity,
           roomName: Date.now()
         });
+        //this.joinRoom();
       });
   }
 
@@ -327,7 +330,6 @@ export default class VideoComp extends Component {
             <div className="preview">
               <div ref="localMedia" />
             </div>
-            {previewVideo}
           </Col>
         </Row>
         <Container>
