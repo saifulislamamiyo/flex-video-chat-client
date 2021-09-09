@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/flex-video-chat-client/static/css/main.75b17f3f.chunk.css",
+    "main.js": "/flex-video-chat-client/static/js/main.5a87d036.chunk.js",
+    "main.js.map": "/flex-video-chat-client/static/js/main.5a87d036.chunk.js.map",
+    "runtime~main.js": "/flex-video-chat-client/static/js/runtime~main.ede027b9.js",
+    "runtime~main.js.map": "/flex-video-chat-client/static/js/runtime~main.ede027b9.js.map",
+    "static/js/2.43d9f9fa.chunk.js": "/flex-video-chat-client/static/js/2.43d9f9fa.chunk.js",
+    "static/js/2.43d9f9fa.chunk.js.map": "/flex-video-chat-client/static/js/2.43d9f9fa.chunk.js.map",
+    "index.html": "/flex-video-chat-client/index.html",
+    "precache-manifest.a7f35ae073ce36a7704e68583346bf2c.js": "/flex-video-chat-client/precache-manifest.a7f35ae073ce36a7704e68583346bf2c.js",
+    "service-worker.js": "/flex-video-chat-client/service-worker.js",
+    "static/css/main.75b17f3f.chunk.css.map": "/flex-video-chat-client/static/css/main.75b17f3f.chunk.css.map",
+    "static/media/logo.svg": "/flex-video-chat-client/static/media/logo.5d5d9eef.svg"
+  }
+}
