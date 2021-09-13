@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/flex-video-chat-client/static/css/main.ddf20676.chunk.css",
-    "main.js": "/flex-video-chat-client/static/js/main.303986c2.chunk.js",
-    "main.js.map": "/flex-video-chat-client/static/js/main.303986c2.chunk.js.map",
+    "main.js": "/flex-video-chat-client/static/js/main.6c6f7fd0.chunk.js",
+    "main.js.map": "/flex-video-chat-client/static/js/main.6c6f7fd0.chunk.js.map",
     "runtime-main.js": "/flex-video-chat-client/static/js/runtime-main.d8c4ef0e.js",
     "runtime-main.js.map": "/flex-video-chat-client/static/js/runtime-main.d8c4ef0e.js.map",
     "static/js/2.98fd4359.chunk.js": "/flex-video-chat-client/static/js/2.98fd4359.chunk.js",
@@ -16,6 +16,6 @@
     "static/js/runtime-main.d8c4ef0e.js",
     "static/js/2.98fd4359.chunk.js",
     "static/css/main.ddf20676.chunk.css",
-    "static/js/main.303986c2.chunk.js"
+    "static/js/main.6c6f7fd0.chunk.js"
   ]
 }
