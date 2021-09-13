@@ -208,17 +208,24 @@ export default class VideoComp extends Component {
     // Participant joining room
     room.on("participantConnected", participant => {
       console.log("Joining: '" + participant.identity + "'");
+      participant.on('trackSubscribed', track => {
+        console.log(participant.identity+ "have added a track: "+track.kind);
+        var previewContainer = this.refs.remoteMedia;
+        //this.attachTracks([track], previewContainer);
+        document.getElementById('remote-media').appendChild(track.attach());
+        //document.getElementById('remote-media-div').appendChild(track.attach());
+      });
     });
 
     // Attach participant’s tracks to DOM when they add a track
-    room.on("trackAdded", (track, participant) => {
+    room.on("trackPublished", (track, participant) => {
       console.log(participant.identity + " added track: " + track.kind);
       var previewContainer = this.refs.remoteMedia;
       this.attachTracks([track], previewContainer);
     });
 
     // Detach participant’s track from DOM when they remove a track.
-    room.on("trackRemoved", (track, participant) => {
+    room.on("trackUnpublished", (track, participant) => {
       console.log(participant.identity + " removed track: " + track.kind);
       this.detachTracks([track]);
     });
@@ -227,6 +234,7 @@ export default class VideoComp extends Component {
     room.on("participantDisconnected", participant => {
       console.log("Participant '" + participant.identity + "' left the room");
       this.detachParticipantTracks(participant);
+      document.getElementById('remote-media').innerHTML='';
     });
 
     // Once the local participant leaves the room, detach the Tracks
@@ -250,6 +258,7 @@ export default class VideoComp extends Component {
 
   onLeaveRoom() {
     this.state.activeRoom.disconnect();
+    document.getElementById('remote-media').innerHTML='';
   }
 
   componentDidMount() {
@@ -335,7 +344,6 @@ export default class VideoComp extends Component {
         <Container>
           <Row>
             <Col md="4">
-              <br />
               {!this.state.hasJoinedRoom ? (
                 <Input
                   value={this.state.identity ? this.state.identity : ""}
@@ -346,8 +354,6 @@ export default class VideoComp extends Component {
               <br />
               <Row>
                 {joinOrLeaveRoomButton}
-                <span>&nbsp;</span>
-                {shareScreenButton}
               </Row>
             </Col>
           </Row>
