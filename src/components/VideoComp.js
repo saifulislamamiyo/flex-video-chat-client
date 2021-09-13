@@ -235,11 +235,13 @@ export default class VideoComp extends Component {
       console.log("Participant '" + participant.identity + "' left the room");
       this.detachParticipantTracks(participant);
       document.getElementById('remote-media').innerHTML='';
+      this.onLeaveRoom();
     });
 
     // Once the local participant leaves the room, detach the Tracks
     // of all other participants, including that of the LocalParticipant.
     room.on("disconnected", () => {
+      console.log("Room disconnect.")
       if (this.state.previewTracks) {
         this.state.previewTracks.forEach(track => {
           track.stop();
