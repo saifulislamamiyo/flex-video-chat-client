@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/flex-video-chat-client/precache-manifest.a7f35ae073ce36a7704e68583346bf2c.js"
+  "/flex-video-chat-client/precache-manifest.c347192d6c65d550f4eab86a0b9cee02.js"
 );
 
 self.addEventListener('message', (event) => {

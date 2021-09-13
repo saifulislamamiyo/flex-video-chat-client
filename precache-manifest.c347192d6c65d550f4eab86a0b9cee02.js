@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "bac815659c62db02320fce1ea49f0b3a",
+    "revision": "c2f00ec73ad6c4e767cde762edae1e41",
     "url": "/flex-video-chat-client/index.html"
   },
   {
-    "revision": "1a2b966ea01b51144791",
+    "revision": "7f21a9b37859c8291d57",
     "url": "/flex-video-chat-client/static/css/main.75b17f3f.chunk.css"
   },
   {
-    "revision": "35ee27ed528bbdddf009",
-    "url": "/flex-video-chat-client/static/js/2.43d9f9fa.chunk.js"
+    "revision": "4d761aa0d04adce9f72c",
+    "url": "/flex-video-chat-client/static/js/2.227c388f.chunk.js"
   },
   {
-    "revision": "1a2b966ea01b51144791",
-    "url": "/flex-video-chat-client/static/js/main.5a87d036.chunk.js"
+    "revision": "7f21a9b37859c8291d57",
+    "url": "/flex-video-chat-client/static/js/main.b3215f34.chunk.js"
   },
   {
     "revision": "eadbe8ba60f098ecb837",
