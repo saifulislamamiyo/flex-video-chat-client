@@ -257,8 +257,8 @@ export default class VideoComp extends Component {
   }
 
   onLeaveRoom() {
-    document.getElementById('remote-media').innerHTML='';
     this.state.activeRoom.disconnect();
+    document.getElementById('remote-media').innerHTML='';
   }
 
   componentDidMount() {
@@ -344,7 +344,6 @@ export default class VideoComp extends Component {
         <Container>
           <Row>
             <Col md="4">
-              <br />
               {!this.state.hasJoinedRoom ? (
                 <Input
                   value={this.state.identity ? this.state.identity : ""}
@@ -355,8 +354,6 @@ export default class VideoComp extends Component {
               <br />
               <Row>
                 {joinOrLeaveRoomButton}
-                <span>&nbsp;</span>
-                {shareScreenButton}
               </Row>
             </Col>
           </Row>
