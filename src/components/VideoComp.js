@@ -3,6 +3,7 @@ import Video from "twilio-video";
 import { Container, Row, Col, Button, Input } from "reactstrap";
 
 const twilioRuntimeDomain = 'video-svc-5346-dev.twil.io';
+const { createLocalVideoTrack } = require('twilio-video');
 
 export default class VideoComp extends Component {
   constructor(props) {
@@ -17,18 +18,16 @@ export default class VideoComp extends Component {
       localMediaAvailable: false /* Represents the availability of a LocalAudioTrack(microphone) and a LocalVideoTrack(camera) */,
       hasJoinedRoom: false,
       activeRoom: null, // Track the current active room
-      screenTrack: null
+      screenTrack: null,
+      showPreview: true
     };
 
     this.joinRoom = this.joinRoom.bind(this);
     this.handleRoomNameChange = this.handleRoomNameChange.bind(this);
     this.roomJoined = this.roomJoined.bind(this);
-    this.onPreviewVideo = this.onPreviewVideo.bind(this);
-    this.onPreviewStop = this.onPreviewStop.bind(this);
     this.onLeaveRoom = this.onLeaveRoom.bind(this);
-    this.onShareScreen = this.onShareScreen.bind(this);
-    this.onStopShareScreen = this.onStopShareScreen.bind(this);
     this.detachParticipantTracks = this.detachParticipantTracks.bind(this);
+    this.attachLocalTracks = this.attachLocalTracks.bind(this);
   }
 
   handleRoomNameChange(e) {
@@ -47,6 +46,7 @@ export default class VideoComp extends Component {
     //   this.setState({ roomNameErr: true });
     //   return;
     // }
+    this.state.roomName="Khospace Delray Beach";
 
     console.log("Joining room '" + this.state.roomName + "'...");
     let connectOptions = {
@@ -77,13 +77,29 @@ export default class VideoComp extends Component {
     }
   }
 
-  // Attach the Tracks to the DOM.
+  // Attach the Tracks to the DOM for others.
   attachTracks(tracks, container) {
+    console.log("Saiful: "+tracks);
     tracks.forEach(track => {
       container.appendChild(track.track.attach());
     });
   }
 
+  attachLocalTracks(tracks, container) {
+    console.log("SaifulL: "+tracks);
+    if(Array.isArray(tracks)){
+      tracks.forEach(track => {
+        let trackDom = track.track.attach();
+        trackDom.style.maxWidth = "15%";
+        trackDom.style.position = "absolute";
+        trackDom.style.top = "20px";
+        trackDom.style.left = "50px";
+        trackDom.style.left = "0px";
+        trackDom.style.margin = "0";
+        container.appendChild(trackDom);
+      });
+    }
+  }
   // Attach the Participant's Tracks to the DOM.
   attachParticipantTracks(participant, container) {
     var tracks = Array.from(participant.tracks.values());
@@ -102,62 +118,10 @@ export default class VideoComp extends Component {
   // Detach the Participant's Tracks from the DOM.
   detachParticipantTracks(participant) {
     var tracks = Array.from(participant.tracks.values());
-    var previewContainer = this.refs.localMedia;
+    var previewContainer = this.refs.remoteMedia;
     if (!previewContainer.querySelector("video")) {
       this.detachParticipantTracks({ tracks: tracks }, previewContainer);
     }
-  }
-
-  onPreviewVideo() {
-    var localTracksPromise = this.state.previewTracks
-      ? Promise.resolve(this.state.previewTracks)
-      : Video.createLocalTracks();
-
-    localTracksPromise.then(
-      tracks => {
-        this.setState({
-          previewTracks: tracks
-        });
-
-        var previewContainer = this.refs.localMedia;
-        if (!previewContainer.querySelector("video")) {
-          this.attachParticipantTracks({ tracks: tracks }, previewContainer);
-        }
-      },
-      function(error) {
-        console.error("Unable to access local media", error);
-      }
-    );
-  }
-
-  onPreviewStop() {
-    this.detachTracks(this.state.previewTracks);
-
-    this.setState({
-      previewTracks: null
-    });
-  }
-
-  onShareScreen() {
-    this.getScreenShare().then(stream => {
-      this.setState({
-        screenTrack: stream.getVideoTracks()[0]
-      });
-      this.state.activeRoom.localParticipant.publishTrack(
-        stream.getVideoTracks()[0]
-      );
-      // document.getElementById("share-screen").style.display = 'none';
-      // document.getElementById("stop-share-screen").style.display = 'inline';
-    });
-  }
-
-  onStopShareScreen() {
-    this.state.activeRoom.localParticipant.unpublishTrack(
-      this.state.screenTrack
-    );
-    this.setState({
-      screenTrack: null
-    });
   }
 
   onCreateTask(roomName, customerName, worker, number) {
@@ -189,52 +153,35 @@ export default class VideoComp extends Component {
     );
 
     // Attach LocalParticipant's tracks to the DOM, if not already attached.
-    var previewContainer = this.refs.localMedia;
-    if (!previewContainer.querySelector("video")) {
-      this.attachParticipantTracks(room.localParticipant, previewContainer);
-    }
+    var previewContainer = this.refs.remoteMedia;
 
     if (!previewContainer.querySelector("video")) {
-      this.attachParticipantTracks(room.localParticipant, previewContainer);
+      //this.attachParticipantTracks(room.localParticipant, previewContainer);
+      this.attachLocalTracks(Array.from(room.localParticipant.tracks.values()), this.refs.remoteMedia);
+      //document.getElementById('local-media').innerHTML='';
+      
     }
-
-    // Attach the Tracks of the room's participants.
-    room.participants.forEach(participant => {
-      console.log("Already in Room: '" + participant.identity + "'");
-      var previewContainer = this.refs.remoteMedia;
-      this.attachParticipantTracks(participant, previewContainer);
-    });
-
+    
     // Participant joining room
     room.on("participantConnected", participant => {
       console.log("Joining: '" + participant.identity + "'");
       participant.on('trackSubscribed', track => {
         console.log(participant.identity+ "have added a track: "+track.kind);
-        var previewContainer = this.refs.remoteMedia;
+        //var previewContainer = this.refs.remoteMedia;
         //this.attachTracks([track], previewContainer);
+        this.setState({
+          showPreview: false
+        });
         document.getElementById('remote-media').appendChild(track.attach());
-        //document.getElementById('remote-media-div').appendChild(track.attach());
+        // this.attachLocalTracks(Array.from(room.localParticipant.tracks.values()), this.refs.remoteMedia);
       });
-    });
-
-    // Attach participant’s tracks to DOM when they add a track
-    room.on("trackPublished", (track, participant) => {
-      console.log(participant.identity + " added track: " + track.kind);
-      var previewContainer = this.refs.remoteMedia;
-      this.attachTracks([track], previewContainer);
-    });
-
-    // Detach participant’s track from DOM when they remove a track.
-    room.on("trackUnpublished", (track, participant) => {
-      console.log(participant.identity + " removed track: " + track.kind);
-      this.detachTracks([track]);
     });
 
     // Detach all participant’s track when they leave a room.
     room.on("participantDisconnected", participant => {
       console.log("Participant '" + participant.identity + "' left the room");
-      this.detachParticipantTracks(participant);
-      document.getElementById('remote-media').innerHTML='';
+      // this.detachParticipantTracks(participant);
+      //document.getElementById('remote-media').innerHTML='';
       this.onLeaveRoom();
     });
 
@@ -253,7 +200,14 @@ export default class VideoComp extends Component {
         activeRoom: null,
         hasJoinedRoom: false,
         previewTracks: null,
-        localMediaAvailable: false
+        localMediaAvailable: false,
+        showPreview: true
+      });
+      createLocalVideoTrack().then(track => {
+        const localMediaContainer = document.getElementById('local-media');
+        if(track.kind == "video"){
+          localMediaContainer.appendChild(track.attach());
+        } 
       });
     });
   }
@@ -277,9 +231,18 @@ export default class VideoComp extends Component {
           identity: data.identity,
           roomName: Date.now()
         });
+        createLocalVideoTrack().then(track => {
+          const localMediaContainer = document.getElementById('local-media');
+          if(track.kind == "video"){
+            localMediaContainer.appendChild(track.attach());
+          } 
+        });
+        window.addEventListener('beforeunload', () => this.onLeaveRoom());
+        window.addEventListener('pagehide', () => this.onLeaveRoom);
         //this.joinRoom();
       });
   }
+  
 
   render() {
     // Hide 'Join Room' button if user has already joined a room.
@@ -294,72 +257,30 @@ export default class VideoComp extends Component {
         </Button>
       </div>
     );
-
-    let shareScreenButton;
-
-    if (this.state.hasJoinedRoom && !this.state.screenTrack) {
-      shareScreenButton = (
-        <Button color="success" onClick={this.onShareScreen}>
-          Share Screen
-        </Button>
-      );
-    } else if (this.state.hasJoinedRoom && this.state.screenTrack) {
-      shareScreenButton = (
-        <Button color="danger" onClick={this.onStopShareScreen}>
-          Stop Sharing
-        </Button>
-      );
-    } else {
-      shareScreenButton = null;
-    }
-
-    let previewVideo;
-
-    if (this.state.previewTracks && !this.state.hasJoinedRoom) {
-      previewVideo = <Button onClick={this.onPreviewStop}>Stop Preview</Button>;
-    } else if (this.state.hasJoinedRoom) {
-      previewVideo = null;
-    } else {
-      previewVideo = (
-        <Button onClick={this.onPreviewVideo}>Preview Video</Button>
-      );
-    }
-
+    
     return (
       <div>
-        <Row style={{ marginTop: 10 }}>
-          <Col md="12">
-            <div
-              className="remoteContainer"
-              ref="remoteMedia"
-              id="remote-media"
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col md="6" className="text-center">
-            <div className="preview">
-              <div ref="localMedia" />
-            </div>
-          </Col>
-        </Row>
-        <Container>
-          <Row>
-            <Col md="4">
-              {!this.state.hasJoinedRoom ? (
-                <Input
-                  value={this.state.identity ? this.state.identity : ""}
-                  placeholder="Customer Name"
-                  onChange={this.handleRoomNameChange}
-                />
-              ) : null}
-              <br />
-              <Row>
+          <Container fluid={true}>
+            <Row style={{ marginTop: 25 }} xs="2">
+              <Col xs="5">
+                {this.state.showPreview ? (
+                  <div className="preview">
+                    <div ref="localMedia" 
+                    id="local-media"/>
+                  </div>
+                ) : null}
+                <div className="remoteContainer">
+                  <div
+                    ref="remoteMedia"
+                    id="remote-media"
+                  />
+                </div>
+              </Col>
+              <Col>
                 {joinOrLeaveRoomButton}
-              </Row>
-            </Col>
-          </Row>
-        </Container>
+              </Col>
+            </Row>
+          </Container>
       </div>
     );
   }
