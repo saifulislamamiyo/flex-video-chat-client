@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/flex-video-chat-client/static/css/main.ddf20676.chunk.css",
-    "main.js": "/flex-video-chat-client/static/js/main.6c6f7fd0.chunk.js",
-    "main.js.map": "/flex-video-chat-client/static/js/main.6c6f7fd0.chunk.js.map",
+    "main.css": "/flex-video-chat-client/static/css/main.cc0a2513.chunk.css",
+    "main.js": "/flex-video-chat-client/static/js/main.1da97da7.chunk.js",
+    "main.js.map": "/flex-video-chat-client/static/js/main.1da97da7.chunk.js.map",
     "runtime-main.js": "/flex-video-chat-client/static/js/runtime-main.d8c4ef0e.js",
     "runtime-main.js.map": "/flex-video-chat-client/static/js/runtime-main.d8c4ef0e.js.map",
-    "static/js/2.98fd4359.chunk.js": "/flex-video-chat-client/static/js/2.98fd4359.chunk.js",
-    "static/js/2.98fd4359.chunk.js.map": "/flex-video-chat-client/static/js/2.98fd4359.chunk.js.map",
+    "static/js/2.9f68a203.chunk.js": "/flex-video-chat-client/static/js/2.9f68a203.chunk.js",
+    "static/js/2.9f68a203.chunk.js.map": "/flex-video-chat-client/static/js/2.9f68a203.chunk.js.map",
     "index.html": "/flex-video-chat-client/index.html",
-    "static/css/main.ddf20676.chunk.css.map": "/flex-video-chat-client/static/css/main.ddf20676.chunk.css.map",
-    "static/js/2.98fd4359.chunk.js.LICENSE.txt": "/flex-video-chat-client/static/js/2.98fd4359.chunk.js.LICENSE.txt",
+    "static/css/main.cc0a2513.chunk.css.map": "/flex-video-chat-client/static/css/main.cc0a2513.chunk.css.map",
+    "static/js/2.9f68a203.chunk.js.LICENSE.txt": "/flex-video-chat-client/static/js/2.9f68a203.chunk.js.LICENSE.txt",
     "static/media/logo.103b5fa1.svg": "/flex-video-chat-client/static/media/logo.103b5fa1.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.d8c4ef0e.js",
-    "static/js/2.98fd4359.chunk.js",
-    "static/css/main.ddf20676.chunk.css",
-    "static/js/main.6c6f7fd0.chunk.js"
+    "static/js/2.9f68a203.chunk.js",
+    "static/css/main.cc0a2513.chunk.css",
+    "static/js/main.1da97da7.chunk.js"
   ]
 }
