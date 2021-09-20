@@ -215,6 +215,7 @@ export default class VideoComp extends Component {
   onLeaveRoom() {
     this.state.activeRoom.disconnect();
     document.getElementById('remote-media').innerHTML='';
+    document.getElementById('local-media').innerHTML='';
   }
 
   componentDidMount() {
