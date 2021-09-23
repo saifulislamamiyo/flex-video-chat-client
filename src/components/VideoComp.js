@@ -74,10 +74,10 @@ export default class VideoComp extends Component {
     if(Array.isArray(tracks)){
       tracks.forEach(track => {
         let trackDom = track.track.attach();
-        trackDom.style.maxWidth = "25%";
+        trackDom.style.maxWidth = "15%";
         trackDom.style.position = "absolute";
         trackDom.style.top = "-30%";
-        trackDom.style.left = "5%";
+        trackDom.style.left = "10%";
         trackDom.style.margin = "0";
         trackDom.style.zIndex = "1";
         trackDom.id = "localVDO";
