@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Video from "twilio-video";
-import { Container, Row, Col, Button, Input } from "reactstrap";
+import { Alert, Button } from "reactstrap";
 
 const twilioRuntimeDomain = 'video-svc-5346-dev.twil.io';
 const { createLocalVideoTrack } = require('twilio-video');
@@ -19,7 +19,9 @@ export default class VideoComp extends Component {
       hasJoinedRoom: false,
       activeRoom: null, // Track the current active room
       screenTrack: null,
-      showPreview: true
+      showPreview: true,
+      isWaiting: false,
+      alertData: ""
     };
 
     this.joinRoom = this.joinRoom.bind(this);
@@ -39,23 +41,17 @@ export default class VideoComp extends Component {
   }
 
   joinRoom() {
-    /*
-   Show an error message on room name text field if user tries         joining a room without providing a room name. This is enabled by setting `roomNameErr` to true
-     */
-    // if (!this.state.roomName.trim()) {
-    //   this.setState({ roomNameErr: true });
-    //   return;
-    // }
-    this.state.roomName="Khospace Delray Beach";
+    this.setState({
+      identity: "Khospace Delray Beach",
+      isWaiting: true,
+      alertData: "Joining room... "
+    });
 
     console.log("Joining room '" + this.state.roomName + "'...");
     let connectOptions = {
       name: this.state.roomName
     };
 
-    if (this.state.previewTracks) {
-      connectOptions.tracks = this.state.previewTracks;
-    }
     Video.connect(this.state.token, connectOptions).then(
       this.roomJoined,
       error => {
@@ -64,44 +60,36 @@ export default class VideoComp extends Component {
     );
   }
 
-  // Screen sharing
-  getScreenShare() {
-    if (navigator.getDisplayMedia) {
-      return navigator.getDisplayMedia({ video: true });
-    } else if (navigator.mediaDevices.getDisplayMedia) {
-      return navigator.mediaDevices.getDisplayMedia({ video: true });
-    } else {
-      return navigator.mediaDevices.getUserMedia({
-        video: { mediaSource: "screen" }
-      });
-    }
-  }
 
   // Attach the Tracks to the DOM for others.
   attachTracks(tracks, container) {
-    console.log("Saiful: "+tracks);
+    console.log("Saiful: attaching tracks:  "+tracks);
     tracks.forEach(track => {
       container.appendChild(track.track.attach());
     });
   }
 
   attachLocalTracks(tracks, container) {
-    console.log("SaifulL: "+tracks);
+    console.log("Saiful: adding local tracks:  "+tracks);
     if(Array.isArray(tracks)){
       tracks.forEach(track => {
         let trackDom = track.track.attach();
-        trackDom.style.maxWidth = "15%";
+        trackDom.style.maxWidth = "25%";
         trackDom.style.position = "absolute";
-        trackDom.style.top = "20px";
-        trackDom.style.left = "50px";
-        trackDom.style.left = "0px";
+        trackDom.style.top = "-30%";
+        trackDom.style.left = "5%";
         trackDom.style.margin = "0";
-        container.appendChild(trackDom);
+        trackDom.style.zIndex = "1";
+        trackDom.id = "localVDO";
+        if (track.kind == 'video'){
+          container.appendChild(trackDom);
+        }
       });
     }
   }
   // Attach the Participant's Tracks to the DOM.
   attachParticipantTracks(participant, container) {
+    console.log("Saiful: already found participants: "+participant.identity);
     var tracks = Array.from(participant.tracks.values());
     this.attachTracks(tracks, container);
   }
@@ -139,38 +127,54 @@ export default class VideoComp extends Component {
   roomJoined(room) {
     // Called when a participant joins a room
     console.log("Joined as '" + this.state.identity + "'");
+    console.log("room name: "+this.state.roomName);
     this.setState({
       activeRoom: room,
       localMediaAvailable: true,
-      hasJoinedRoom: true // Removes ‘Join Room’ button and shows ‘Leave Room’
+      hasJoinedRoom: true, 
+      showPreview: false,
+      alertData: "Joined a room, waiting for an agent..."
     });
 
     this.onCreateTask(
       this.state.roomName,
-      this.state.roomName,
+      this.state.identity,
       localStorage.worker,
       localStorage.number
     );
 
     // Attach LocalParticipant's tracks to the DOM, if not already attached.
     var previewContainer = this.refs.remoteMedia;
+    console.log(document.getElementById('remote-media').children);
 
-    if (!previewContainer.querySelector("video")) {
+    // add participant tracks
+    // room.participants.forEach((participant) => {
+    //   this.attachParticipantTracks(participant, this.refs.remoteMedia);
+    // });
+
+    // if (!previewContainer.querySelector("video")) {
       //this.attachParticipantTracks(room.localParticipant, previewContainer);
       this.attachLocalTracks(Array.from(room.localParticipant.tracks.values()), this.refs.remoteMedia);
       //document.getElementById('local-media').innerHTML='';
-      
-    }
+      let childElements = document.getElementById('remote-media').children;
+      for(var i=0; i<childElements.length; i++){
+        var child = childElements[i];
+        console.log("Saiful: id is: "+child.id);
+        if(child.id != 'localVDO'){
+          document.getElementById('remote-media').removeChild(child);
+        }
+      }
+    // }
     
     // Participant joining room
     room.on("participantConnected", participant => {
-      console.log("Joining: '" + participant.identity + "'");
+      console.log("Agent joined: '" + participant.identity + "'");
       participant.on('trackSubscribed', track => {
         console.log(participant.identity+ "have added a track: "+track.kind);
         //var previewContainer = this.refs.remoteMedia;
         //this.attachTracks([track], previewContainer);
         this.setState({
-          showPreview: false
+          alertData: "Agent "+participant.identity+" has joined the room."
         });
         document.getElementById('remote-media').appendChild(track.attach());
         // this.attachLocalTracks(Array.from(room.localParticipant.tracks.values()), this.refs.remoteMedia);
@@ -201,7 +205,8 @@ export default class VideoComp extends Component {
         hasJoinedRoom: false,
         previewTracks: null,
         localMediaAvailable: false,
-        showPreview: true
+        showPreview: true,
+        isWaiting: false
       });
       createLocalVideoTrack().then(track => {
         const localMediaContainer = document.getElementById('local-media');
@@ -209,13 +214,26 @@ export default class VideoComp extends Component {
           localMediaContainer.appendChild(track.attach());
         } 
       });
+      var remoteContainer = document.getElementById('remote-media');
+        if(remoteContainer){
+          document.getElementById('remote-media').innerHTML='';
+        }
     });
   }
 
   onLeaveRoom() {
+    this.setState({
+      alertData: ""
+    });
     this.state.activeRoom.disconnect();
-    document.getElementById('remote-media').innerHTML='';
-    document.getElementById('local-media').innerHTML='';
+    var remoteContainer = document.getElementById('remote-media');
+    if(remoteContainer){
+      document.getElementById('remote-media').innerHTML='';
+    }
+    var localContainer = document.getElementById('local-media');
+    if(localContainer){
+      document.getElementById('local-media').innerHTML='';
+    }
   }
 
   componentDidMount() {
@@ -230,7 +248,7 @@ export default class VideoComp extends Component {
         this.setState({
           token: data.token,
           identity: data.identity,
-          roomName: Date.now()
+          roomName: 't-'+Date.now()
         });
         createLocalVideoTrack().then(track => {
           const localMediaContainer = document.getElementById('local-media');
@@ -241,47 +259,56 @@ export default class VideoComp extends Component {
         window.addEventListener('beforeunload', () => this.onLeaveRoom());
         window.addEventListener('pagehide', () => this.onLeaveRoom);
         //this.joinRoom();
+        var remoteContainer = document.getElementById('remote-media');
+        if(remoteContainer){
+          document.getElementById('remote-media').innerHTML='';
+        }
       });
   }
   
 
   render() {
     // Hide 'Join Room' button if user has already joined a room.
-    let joinOrLeaveRoomButton = this.state.hasJoinedRoom ? (
-      <Button color="danger" onClick={this.onLeaveRoom}>
-        Hang Up
+    let connectingButton = (
+      <Button color="warning" disabled>
+          Connecting...
       </Button>
-    ) : (
+    );
+    let defaultJoinOrLeaveRoomButton = this.state.isWaiting ? connectingButton : (
       <div>
         <Button color="success" onClick={this.joinRoom}>
           Start Video
         </Button>
       </div>
     );
+    let joinOrLeaveRoomButton = this.state.hasJoinedRoom ? (
+      <Button color="danger" onClick={this.onLeaveRoom}>
+        Hang Up
+      </Button>
+    ) : defaultJoinOrLeaveRoomButton ;
     
     return (
       <div>
-          <Container fluid={true}>
-            <Row style={{ marginTop: 25 }} xs="2">
-              <Col xs="5">
-                {this.state.showPreview ? (
+          <div className="containerS">
+              {this.state.showPreview ? (
                   <div className="preview">
                     <div ref="localMedia" 
                     id="local-media"/>
                   </div>
-                ) : null}
-                <div className="remoteContainer">
-                  <div
-                    ref="remoteMedia"
-                    id="remote-media"
-                  />
+                ) : <div className="remoteContainer">
+                <div
+                  ref="remoteMedia"
+                  id="remote-media"
+                />
+                </div>}
+
+                <div className="buttonS">
+                  {joinOrLeaveRoomButton}
                 </div>
-              </Col>
-              <Col>
-                {joinOrLeaveRoomButton}
-              </Col>
-            </Row>
-          </Container>
+                <div color="primary" className="alertS" ref="alert" id="alert-data">
+                  {this.state.alertData}
+                </div>
+          </div>
       </div>
     );
   }

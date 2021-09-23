@@ -1,44 +1,57 @@
-import React from 'react';
-import { Container, Row, Col } from 'reactstrap';
+import React, { Component } from "react";
+import Video from "twilio-video";
+import { Container, Row, Col, Button, Input } from "reactstrap";
 
-const Example = (props) => {
-  return (
-    <Container>
-      <Row>
-        <Col>.colA</Col>
-      </Row>
-      <Row>
-        <Col>.colA</Col>
-        <Col>.colB</Col>
-        <Col>.colC</Col>
-        <Col>.colD</Col>
-      </Row>
-      <Row>
-        <Col xs="3">.col-3</Col>
-        <Col xs="auto">.col-auto - variable width content</Col>
-        <Col xs="3">.col-3</Col>
-      </Row>
-      <Row>
-        <Col xs="6">.col-6</Col>
-        <Col xs="6">.col-6</Col>
-      </Row>
-      <Row>
-        <Col xs="6" sm="4">.col-6 .col-sm-4</Col>
-        <Col xs="6" sm="4">.col-6 .col-sm-4</Col>
-        <Col sm="4">.col-sm-4</Col>
-      </Row>
-      <Row>
-        <Col sm={{ size: 6, order: 2, offset: 1 }}>.col-sm-6 .order-sm-2 .offset-sm-1</Col>
-      </Row>
-      <Row>
-        <Col sm="12" md={{ size: 6, offset: 3 }}>.col-sm-12 .col-md-6 .offset-md-3</Col>
-      </Row>
-      <Row>
-        <Col sm={{ size: 'auto', offset: 1 }}>.col-sm-auto .offset-sm-1</Col>
-        <Col sm={{ size: 'auto', offset: 1 }}>.col-sm-auto .offset-sm-1</Col>
-      </Row>
-    </Container>
-  );
+export default class ExampleComp extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      worker: "",
+      token: "",
+      identity: "",
+      roomName: "" /* Will store the room name */,
+      roomNameErr: false /* Track error for room name TextField. This will    enable us to show an error message when this variable is true */,
+      previewTracks: null,
+      localMediaAvailable: false /* Represents the availability of a LocalAudioTrack(microphone) and a LocalVideoTrack(camera) */,
+      hasJoinedRoom: false,
+      activeRoom: null, // Track the current active room
+      screenTrack: null,
+      showPreview: true
+    };
+  }
+
+  render() {
+    // Hide 'Join Room' button if user has already joined a room.
+    let joinOrLeaveRoomButton = this.state.hasJoinedRoom ? (
+      <Button color="danger" onClick={this.onLeaveRoom}>
+        Hang Up
+      </Button>
+    ) : (
+        <Button color="success" onClick={this.joinRoom}>
+          Start Video
+        </Button>
+    );
+    
+    return (
+      <div>
+          <div className="containerS">
+              {this.state.showPreview ? (
+                  <div className="preview">
+                    <div ref="localMedia" 
+                    id="local-media"/>
+                  </div>
+                ) : <div className="remoteContainer">
+                <div
+                  ref="remoteMedia"
+                  id="remote-media"
+                />
+                </div>}
+
+                <div className="buttonS">
+                  {joinOrLeaveRoomButton}
+                </div>
+          </div>
+      </div>
+    );
+  }
 }
-
-export default Example;

@@ -57,21 +57,47 @@
   overflow-y: scroll;
 }
 
+.containerS {
+  margin-left: 0;
+  margin-right: 0;
+  position: relative;
+}
+
+.buttonS {
+  z-index: 1;
+  position: absolute;
+  left: 50vw;
+  bottom: 0;
+  padding-bottom: 5%;
+}
+
 #remote-media video {
   max-width: 100%;
   max-height: 100%;
   border: none;
+  width: 100vw;
+  height: 100vh;
 }
 
 .remoteContainer {
+  width: 100vw;
+  height: 100vh;
   text-align: left;
   margin: 1em;
   position: relative;
 }
 
+.remoteContainer video {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  max-height: 100%;
+  border: none;
+}
+
 .preview {
-  /* width: 270px;
-  height: 202px; */
+  width: 100vw;
+  height: 100vh;
   border: 1px solid #cececc;
   box-sizing: border-box;
   background-color: lightslategray;
@@ -83,6 +109,8 @@
 }
 
 .preview video {
+  width: 100vw;
+  height: 100vh;
   max-width: 100%;
   max-height: 100%;
   border: none;
@@ -93,3 +121,13 @@
   margin-left: -80%;
 }
 
+.alertS {
+  z-index: 1;
+  top: 0;
+  left: 0;
+  position: absolute;
+  height: 5%;
+  opacity: 0.6;
+  left: 5%;
+  background-color: lightsteelblue;
+}
